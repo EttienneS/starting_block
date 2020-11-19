@@ -8,6 +8,8 @@ namespace Assets.Map
     public class ChunkRenderer : MonoBehaviour
     {
         private const int _vertsPerCell = 4;
+        private Camera _camera;
+        private Cell[,] _cells;
         private List<Color> _colors;
         private Mesh _mesh;
         private MeshCollider _meshCollider;
@@ -15,13 +17,11 @@ namespace Assets.Map
         private List<Vector2> _uvs;
         private List<Vector3> _vertices;
 
-        public ChunkCell[,] ChunkCells { get; set; }
-
         public int X { get; internal set; }
 
         public int Z { get; internal set; }
 
-        public static ChunkRenderer CreateChunkRenderer(int x, int z, ChunkCell[,] cells)
+        public static ChunkRenderer CreateChunkRenderer(int x, int z, Cell[,] cells)
         {
             var gameObject = new GameObject();
             gameObject.AddComponent<MeshFilter>();
@@ -30,7 +30,7 @@ namespace Assets.Map
             var chunkRenderer = gameObject.AddComponent<ChunkRenderer>();
             chunkRenderer.X = x;
             chunkRenderer.Z = z;
-            chunkRenderer.ChunkCells = cells;
+            chunkRenderer.SetCells(cells);
             return chunkRenderer;
         }
 
@@ -41,15 +41,28 @@ namespace Assets.Map
             _triangles.Add(c);
         }
 
+        public void OnMouseUp()
+        {
+            var inputRay = _camera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(inputRay, out RaycastHit hit))
+            {
+                var hitX = (int)hit.point.x % Constants.ChunkSize;
+                var hitZ = (int)hit.point.z % Constants.ChunkSize;
+                var cell = _cells[hitX, hitZ];
+
+                CellEventManager.CellClicked(cell);
+            }
+        }
+
+        public void SetCells(Cell[,] cells)
+        {
+            _cells = cells;
+        }
+
         public void Start()
         {
             transform.position = GetPosition();
-
-            GenerateMesh();
-        }
-
-        internal void Refresh()
-        {
+            _camera = Camera.main;
             GenerateMesh();
         }
 
@@ -169,7 +182,7 @@ namespace Assets.Map
                     var color = lastColor;
                     if (x != width && z != width)
                     {
-                        var cell = ChunkCells[x, z];
+                        var cell = _cells[x, z];
                         color = cell.Color;
                         lastColor = color;
                     }
@@ -190,7 +203,7 @@ namespace Assets.Map
             {
                 for (var x = 0; x < width; x++)
                 {
-                    var cell = ChunkCells[x, z];
+                    var cell = _cells[x, z];
                     var height = cell.Y;
 
                     AddVert(x - 0.5f, height, z - 0.5f, cell.Color);
@@ -220,7 +233,7 @@ namespace Assets.Map
             }
         }
 
-        private void GenerateMesh()
+        public void GenerateMesh()
         {
             ResetMesh();
 

@@ -14,14 +14,14 @@ public class SimpleMapGen : MonoBehaviour
 
     private float _delta;
 
-    private ChunkCell[,] map;
+    private Cell[,] map;
 
     public void RegenerateMap()
     {
         using (Instrumenter.Start())
         {
             var mapSize = GetMapSize();
-            map = new ChunkCell[mapSize, mapSize];
+            map = new Cell[mapSize, mapSize];
 
             var noise = new FastNoiseLite(Guid.NewGuid().GetHashCode());
             noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
@@ -66,7 +66,7 @@ public class SimpleMapGen : MonoBehaviour
                         color = Color.blue;
                     }
 
-                    map[x, z] = new ChunkCell(x, z, cellHeight, color);
+                    map[x, z] = new Cell(x, z, cellHeight, color);
                 }
             }
 
@@ -83,6 +83,12 @@ public class SimpleMapGen : MonoBehaviour
     {
         _chunkManager = ChunkManager.CreateChunkManager(ChunkMaterial);
         RegenerateMap();
+
+        CellEventManager.OnCellClicked += (cell) =>
+        {
+            cell.Color = Color.magenta;
+            _chunkManager.GetRendererForCell(cell).GenerateMesh();
+        };
     }
 
     private void Update()
@@ -92,7 +98,6 @@ public class SimpleMapGen : MonoBehaviour
         if (_delta > 2.5f)
         {
             _delta = 0;
-            //RegenerateMap();
         }
     }
 }

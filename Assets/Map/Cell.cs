@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace Assets.Map
 {
-    public class ChunkCell : PathableCell
+    public class Cell : PathableCell
     {
-        private List<ChunkCell> _nonNullNeighbours;
+        private List<Cell> _nonNullNeighbours;
 
-        public ChunkCell(int x, int z, float height, Color color)
+        public Cell(int x, int z, float height, Color color)
         {
             X = x;
             Z = z;
@@ -19,17 +19,18 @@ namespace Assets.Map
 
         public Color Color { get; set; }
 
-        public new List<ChunkCell> NonNullNeighbors
+        public new List<Cell> NonNullNeighbors
         {
             get
             {
                 if (_nonNullNeighbours == null)
                 {
-                    _nonNullNeighbours = base.NonNullNeighbors.ConvertAll(c => c as ChunkCell).ToList();
+                    _nonNullNeighbours = base.NonNullNeighbors.ConvertAll(c => c as Cell).ToList();
                 }
                 return _nonNullNeighbours;
             }
         }
+
         public override float TravelCost
         {
             get

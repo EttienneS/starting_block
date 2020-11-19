@@ -7,7 +7,9 @@ namespace Assets.Map
     {
         public Material ChunkMaterial;
 
-        private ChunkCell[,] _cells;
+        private Cell[,] _cells;
+        private ChunkRenderer[,] _chunkRenderers;
+
         public Pathfinder Pathfinder { get; internal set; }
 
         public static ChunkManager CreateChunkManager(Material chunkMaterial, Transform parent = null)
@@ -32,7 +34,7 @@ namespace Assets.Map
             }
         }
 
-        public void RenderCells(ChunkCell[,] cellsToRender)
+        public void RenderCells(Cell[,] cellsToRender)
         {
             DestroyChunks();
             _cells = cellsToRender;
@@ -40,11 +42,12 @@ namespace Assets.Map
             var width = Mathf.FloorToInt(cellsToRender.GetLength(0) / Constants.ChunkSize);
             var height = Mathf.FloorToInt(cellsToRender.GetLength(1) / Constants.ChunkSize);
 
+            _chunkRenderers = new ChunkRenderer[width, height];
             for (int x = 0; x < width; x++)
             {
                 for (int z = 0; z < height; z++)
                 {
-                    MakeChunkRenderer(x, z);
+                    _chunkRenderers[x, z] = MakeChunkRenderer(x, z);
                 }
             }
             CreatePathfinder();
@@ -55,9 +58,9 @@ namespace Assets.Map
             CreatePathfinder();
         }
 
-        internal ChunkCell[,] GetCells(int offsetX, int offsetY)
+        internal Cell[,] GetCells(int offsetX, int offsetY)
         {
-            var cells = new ChunkCell[Constants.ChunkSize, Constants.ChunkSize];
+            var cells = new Cell[Constants.ChunkSize, Constants.ChunkSize];
             offsetX *= Constants.ChunkSize;
             offsetY *= Constants.ChunkSize;
 
@@ -79,13 +82,23 @@ namespace Assets.Map
             Pathfinder = pf.AddComponent<Pathfinder>();
         }
 
-        private void MakeChunkRenderer(int x, int z)
+        private ChunkRenderer MakeChunkRenderer(int x, int z)
         {
             var renderer = ChunkRenderer.CreateChunkRenderer(x, z, GetCells(x, z));
             renderer.transform.SetParent(transform);
             renderer.name = $"{x} - {z}";
 
             renderer.SetMaterial(ChunkMaterial);
+
+            return renderer;
+        }
+
+        public ChunkRenderer GetRendererForCell(Cell cell)
+        {
+            var x = Mathf.FloorToInt(cell.X / Constants.ChunkSize);
+            var z = Mathf.FloorToInt(cell.Z / Constants.ChunkSize);
+
+            return _chunkRenderers[x, z];
         }
     }
 }
