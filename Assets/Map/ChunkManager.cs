@@ -69,7 +69,7 @@ namespace Assets.Map
             Pathfinder = pf.AddComponent<Pathfinder>();
         }
 
-        private void DestroyChunks()
+        public void DestroyChunks()
         {
             foreach (Transform child in transform)
             {
@@ -77,13 +77,7 @@ namespace Assets.Map
             }
         }
 
-        public void RefreshChunks()
-        {
-            foreach (var renderer in GetComponentsInChildren<ChunkRenderer>())
-            {
-                renderer.Refresh();
-            }
-        }
+      
 
         private void MakeChunkRenderer(int x, int z)
         {
