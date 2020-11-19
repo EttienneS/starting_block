@@ -24,8 +24,17 @@ namespace Assets.Map
             return manager;
         }
 
+        public void DestroyChunks()
+        {
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
         public void RenderCells(ChunkCell[,] cellsToRender)
         {
+            DestroyChunks();
             _cells = cellsToRender;
 
             var width = Mathf.FloorToInt(cellsToRender.GetLength(0) / Constants.ChunkSize);
@@ -38,6 +47,7 @@ namespace Assets.Map
                     MakeChunkRenderer(x, z);
                 }
             }
+            CreatePathfinder();
         }
 
         public void Start()
@@ -68,16 +78,6 @@ namespace Assets.Map
             pf.transform.SetParent(transform);
             Pathfinder = pf.AddComponent<Pathfinder>();
         }
-
-        public void DestroyChunks()
-        {
-            foreach (Transform child in transform)
-            {
-                Destroy(child.gameObject);
-            }
-        }
-
-      
 
         private void MakeChunkRenderer(int x, int z)
         {
