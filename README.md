@@ -23,7 +23,7 @@ This stops hitching on large maps or when paths no longer exist.
 
 An implementation (with minor enhancements) of the [Game Dev Guide](https://www.youtube.com/watch?v=rnqF6S7PfFA) strategy game controller.  This camera controller that appears to rotate the world instead of rotating the camera like a FPS.
 
-### Service Locator
+### Service Locator (from Karthus project)
 
 Doing proper dependency injection in Unity is very hard as the state is managed in a weird way.  A way to get around this is to use the Service Locator pattern, using this method a set of services can be defined (and instantiated in sequence) at start time, the Locator can then be invoked to find the service without the FindComponent<> overhead that Unity has. 
 
