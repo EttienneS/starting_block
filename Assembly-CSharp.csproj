@@ -75,8 +75,9 @@
     <Compile Include="Assets\Map\Pathing\CellPriorityQueue.cs" />
     <Compile Include="Assets\StrategyCamera\CameraController.cs" />
     <Compile Include="Assets\ServiceLocator\IGameService.cs" />
-    <Compile Include="Assets\ServiceLocator\Loc.cs" />
     <Compile Include="Assets\ServiceLocator\Bootstrapper.cs" />
+    <Compile Include="Assets\ServiceLocator\ServiceLocator.cs" />
+    <Compile Include="Assets\Map\ChunkRendererFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

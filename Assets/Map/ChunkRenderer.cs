@@ -1,6 +1,4 @@
-﻿using Assets.StrategyCamera;
-using Assets.ServiceLocator;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Map
@@ -10,30 +8,26 @@ namespace Assets.Map
     public class ChunkRenderer : MonoBehaviour
     {
         private const int _vertsPerCell = 4;
+
+        private Camera _camera;
+
         private Cell[,] _cells;
+
         private List<Color> _colors;
+
         private Mesh _mesh;
+
         private MeshCollider _meshCollider;
+
         private List<int> _triangles;
+
         private List<Vector2> _uvs;
+
         private List<Vector3> _vertices;
 
         public int X { get; internal set; }
 
         public int Z { get; internal set; }
-
-        public static ChunkRenderer CreateChunkRenderer(int x, int z, Cell[,] cells)
-        {
-            var gameObject = new GameObject();
-            gameObject.AddComponent<MeshFilter>();
-            gameObject.AddComponent<MeshRenderer>();
-
-            var chunkRenderer = gameObject.AddComponent<ChunkRenderer>();
-            chunkRenderer.X = x;
-            chunkRenderer.Z = z;
-            chunkRenderer.SetCells(cells);
-            return chunkRenderer;
-        }
 
         public void AddTriangle(int a, int b, int c)
         {
@@ -57,7 +51,7 @@ namespace Assets.Map
 
         public void OnMouseUp()
         {
-            var inputRay = Loc.Current.Get<CameraController>().Camera.ScreenPointToRay(Input.mousePosition);
+            var inputRay = _camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(inputRay, out RaycastHit hit))
             {
                 var hitX = (int)hit.point.x % Constants.ChunkSize;
@@ -66,6 +60,11 @@ namespace Assets.Map
 
                 CellEventManager.CellClicked(cell);
             }
+        }
+
+        public void SetCamera(Camera camera)
+        {
+            _camera = camera;
         }
 
         public void SetCells(Cell[,] cells)

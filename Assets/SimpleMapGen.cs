@@ -5,7 +5,7 @@ using Assets.StrategyCamera;
 using System;
 using UnityEngine;
 
-public class SimpleMapGen : MonoBehaviour, IGameService
+public class SimpleMapGen : LocatableMonoBehavior
 {
     public Material ChunkMaterial;
 
@@ -14,7 +14,7 @@ public class SimpleMapGen : MonoBehaviour, IGameService
 
     private Cell[,] map;
 
-    public void Initialize()
+    public override void Initialize()
     {
         GenerateMap();
 
@@ -77,30 +77,31 @@ public class SimpleMapGen : MonoBehaviour, IGameService
                 }
             }
 
-            Loc.Current.Get<ChunkManager>().RenderCells(map);
+            Locate<ChunkManager>().RenderCells(map);
         }
     }
 
-    private static void MakeCellMagentaOnClick()
+    private void MakeCellMagentaOnClick()
     {
         CellEventManager.OnCellClicked += (cell) =>
         {
             cell.Color = Color.magenta;
-            Loc.Current.Get<ChunkManager>().GetRendererForCell(cell).GenerateMesh();
+            Locate<ChunkManager>().GetRendererForCell(cell).GenerateMesh();
         };
     }
 
     private void ConfigureMapBounds()
     {
         var max = GetMapSize();
-        var camera = Loc.Current.Get<CameraController>();
+        var camera = Locate<CameraController>();
         camera.ConfigureBounds(0, max, 0, max + 50);
         camera.MoveToWorldCenter();
     }
 
     private void GenerateMap()
     {
-        Loc.Current.Register(ChunkManager.CreateChunkManager(ChunkMaterial));
+        GetLocator().Unregister<ChunkManager>();
+        GetLocator().Register(ChunkManager.CreateChunkManager(ChunkMaterial));
         RegenerateMap();
     }
 

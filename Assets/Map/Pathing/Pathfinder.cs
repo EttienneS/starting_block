@@ -1,25 +1,14 @@
-﻿using System;
+﻿using Assets.ServiceLocator;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Map.Pathing
 {
-    public class Pathfinder : MonoBehaviour
+    public class Pathfinder : LocatableMonoBehavior
     {
-        private static Pathfinder _instance;
-
-        public static Pathfinder Instance
-        {
-            get
-            {
-                return _instance != null ? _instance : (_instance = FindObjectOfType<Pathfinder>());
-            }
-            set
-            {
-                _instance = value;
-            }
-        }
+       
 
         private CellPriorityQueue _searchFrontier;
         private int _searchFrontierPhase;
@@ -196,6 +185,11 @@ namespace Assets.Map.Pathing
                     }
                 }
             }
+        }
+
+        public override void Initialize()
+        {
+            
         }
     }
 }

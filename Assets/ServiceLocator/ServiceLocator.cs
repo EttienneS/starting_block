@@ -6,28 +6,17 @@ using UnityEngine;
 
 namespace Assets.ServiceLocator
 {
-    public sealed class Loc
+    public sealed class ServiceLocator
     {
         private readonly Queue<IGameService> _initializationQueue;
         private readonly Dictionary<string, IGameService> _services;
 
-        private Loc()
+        public ServiceLocator()
         {
             _services = new Dictionary<string, IGameService>();
             _initializationQueue = new Queue<IGameService>();
         }
 
-        public static Loc Current { get; private set; }
-
-        public static void Initiailze()
-        {
-            Current = new Loc();
-        }
-
-        public static void Reset()
-        {
-            Current = null;
-        }
 
         public T Get<T>() where T : IGameService
         {
@@ -51,8 +40,7 @@ namespace Assets.ServiceLocator
                 var name = nextItem.GetType().Name;
                 using (Instrumenter.Start(name))
                 {
-                    nextItem.Initialize();
-                    _services.Add(name, nextItem);
+                    InitializeService(name, nextItem);
                 }
             }
         }
@@ -74,7 +62,7 @@ namespace Assets.ServiceLocator
             string key = typeof(T).Name;
             if (!_services.ContainsKey(key))
             {
-                Debug.LogError($"Attempted to unregister service of type {key} which is not registered with the {GetType().Name}.");
+                Debug.Log($"Attempted to unregister service of type {key} which is not registered with the {GetType().Name}.");
                 return;
             }
 
@@ -89,6 +77,13 @@ namespace Assets.ServiceLocator
                 msg += $"- {service.Key}\n";
             }
             Debug.Log(msg);
+        }
+
+        private void InitializeService(string name, IGameService service)
+        {
+            service.BindServiceLocator(this);
+            service.Initialize();
+            _services.Add(name, service);
         }
     }
 }

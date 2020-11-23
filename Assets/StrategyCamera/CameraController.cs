@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.StrategyCamera
 {
-    public class CameraController : MonoBehaviour, IGameService
+    public class CameraController : LocatableMonoBehavior
     {
         public Camera Camera;
         public float fastSpeed;
@@ -50,7 +50,7 @@ namespace Assets.StrategyCamera
             }
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
             newPosition = transform.position;
             newRotation = transform.rotation;

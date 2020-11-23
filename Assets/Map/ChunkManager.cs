@@ -1,17 +1,17 @@
 ﻿using Assets.Map.Pathing;
 using Assets.ServiceLocator;
+using Assets.StrategyCamera;
 using UnityEngine;
 
 namespace Assets.Map
 {
-    public class ChunkManager : MonoBehaviour, IGameService
+    public class ChunkManager : LocatableMonoBehavior
     {
         public Material ChunkMaterial;
 
         private Cell[,] _cells;
+        private ChunkRendererFactory _chunkRendererFactory;
         private ChunkRenderer[,] _chunkRenderers;
-
-        public Pathfinder Pathfinder { get; internal set; }
 
         public static ChunkManager CreateChunkManager(Material chunkMaterial, Transform parent = null)
         {
@@ -33,6 +33,18 @@ namespace Assets.Map
             {
                 Destroy(child.gameObject);
             }
+        }
+
+        public ChunkRenderer GetRendererForCell(Cell cell)
+        {
+            var x = Mathf.FloorToInt(cell.X / Constants.ChunkSize);
+            var z = Mathf.FloorToInt(cell.Z / Constants.ChunkSize);
+
+            return _chunkRenderers[x, z];
+        }
+        public override void Initialize()
+        {
+            _chunkRendererFactory = new ChunkRendererFactory(Locate<CameraController>().Camera);
         }
 
         public void RenderCells(Cell[,] cellsToRender)
@@ -75,30 +87,20 @@ namespace Assets.Map
         {
             var pf = new GameObject("Pathfinder");
             pf.transform.SetParent(transform);
-            Pathfinder = pf.AddComponent<Pathfinder>();
+
+            GetLocator().Unregister<Pathfinder>();
+            GetLocator().Register(pf.AddComponent<Pathfinder>());
         }
 
         private ChunkRenderer MakeChunkRenderer(int x, int z)
         {
-            var renderer = ChunkRenderer.CreateChunkRenderer(x, z, GetCells(x, z));
+            var renderer = _chunkRendererFactory.CreateChunkRenderer(x, z, GetCells(x, z));
             renderer.transform.SetParent(transform);
             renderer.name = $"{x} - {z}";
 
             renderer.SetMaterial(ChunkMaterial);
 
             return renderer;
-        }
-
-        public ChunkRenderer GetRendererForCell(Cell cell)
-        {
-            var x = Mathf.FloorToInt(cell.X / Constants.ChunkSize);
-            var z = Mathf.FloorToInt(cell.Z / Constants.ChunkSize);
-
-            return _chunkRenderers[x, z];
-        }
-
-        public void Initialize()
-        {
         }
     }
 }
