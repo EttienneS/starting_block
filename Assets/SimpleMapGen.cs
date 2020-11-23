@@ -1,20 +1,27 @@
 ﻿using Assets.Helpers;
 using Assets.Map;
+using Assets.ServiceLocator;
+using Assets.StrategyCamera;
 using System;
 using UnityEngine;
 
-public class SimpleMapGen : MonoBehaviour
+public class SimpleMapGen : MonoBehaviour, IGameService
 {
     public Material ChunkMaterial;
 
     [Range(5, 30)]
     public int ChunksToRender = 30;
 
-    private ChunkManager _chunkManager;
-
-    private float _delta;
-
     private Cell[,] map;
+
+    public void Initialize()
+    {
+        GenerateMap();
+
+        MakeCellMagentaOnClick();
+
+        ConfigureMapBounds();
+    }
 
     public void RegenerateMap()
     {
@@ -70,34 +77,35 @@ public class SimpleMapGen : MonoBehaviour
                 }
             }
 
-            _chunkManager.RenderCells(map);
+            Loc.Current.Get<ChunkManager>().RenderCells(map);
         }
+    }
+
+    private static void MakeCellMagentaOnClick()
+    {
+        CellEventManager.OnCellClicked += (cell) =>
+        {
+            cell.Color = Color.magenta;
+            Loc.Current.Get<ChunkManager>().GetRendererForCell(cell).GenerateMesh();
+        };
+    }
+
+    private void ConfigureMapBounds()
+    {
+        var max = GetMapSize();
+        var camera = Loc.Current.Get<CameraController>();
+        camera.ConfigureBounds(0, max, 0, max + 50);
+        camera.MoveToWorldCenter();
+    }
+
+    private void GenerateMap()
+    {
+        Loc.Current.Register(ChunkManager.CreateChunkManager(ChunkMaterial));
+        RegenerateMap();
     }
 
     private int GetMapSize()
     {
         return Constants.ChunkSize * ChunksToRender;
-    }
-
-    private void Start()
-    {
-        _chunkManager = ChunkManager.CreateChunkManager(ChunkMaterial);
-        RegenerateMap();
-
-        CellEventManager.OnCellClicked += (cell) =>
-        {
-            cell.Color = Color.magenta;
-            _chunkManager.GetRendererForCell(cell).GenerateMesh();
-        };
-    }
-
-    private void Update()
-    {
-        _delta += Time.deltaTime;
-
-        if (_delta > 2.5f)
-        {
-            _delta = 0;
-        }
     }
 }

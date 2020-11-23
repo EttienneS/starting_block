@@ -1,9 +1,10 @@
 ﻿using Assets.Map.Pathing;
+using Assets.ServiceLocator;
 using UnityEngine;
 
 namespace Assets.Map
 {
-    public class ChunkManager : MonoBehaviour
+    public class ChunkManager : MonoBehaviour, IGameService
     {
         public Material ChunkMaterial;
 
@@ -53,11 +54,6 @@ namespace Assets.Map
             CreatePathfinder();
         }
 
-        public void Start()
-        {
-            CreatePathfinder();
-        }
-
         internal Cell[,] GetCells(int offsetX, int offsetY)
         {
             var cells = new Cell[Constants.ChunkSize, Constants.ChunkSize];
@@ -99,6 +95,10 @@ namespace Assets.Map
             var z = Mathf.FloorToInt(cell.Z / Constants.ChunkSize);
 
             return _chunkRenderers[x, z];
+        }
+
+        public void Initialize()
+        {
         }
     }
 }

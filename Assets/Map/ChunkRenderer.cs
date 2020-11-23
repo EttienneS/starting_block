@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Assets.StrategyCamera;
+using Assets.ServiceLocator;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Map
@@ -8,7 +10,6 @@ namespace Assets.Map
     public class ChunkRenderer : MonoBehaviour
     {
         private const int _vertsPerCell = 4;
-        private Camera _camera;
         private Cell[,] _cells;
         private List<Color> _colors;
         private Mesh _mesh;
@@ -41,9 +42,22 @@ namespace Assets.Map
             _triangles.Add(c);
         }
 
+        public void GenerateMesh()
+        {
+            ResetMesh();
+
+            var width = GetWidth();
+
+            GenerateInternalMap(width);
+
+            FillSideRenderWalls(width);
+
+            AssignMesh();
+        }
+
         public void OnMouseUp()
         {
-            var inputRay = _camera.ScreenPointToRay(Input.mousePosition);
+            var inputRay = Loc.Current.Get<CameraController>().Camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(inputRay, out RaycastHit hit))
             {
                 var hitX = (int)hit.point.x % Constants.ChunkSize;
@@ -62,7 +76,6 @@ namespace Assets.Map
         public void Start()
         {
             transform.position = GetPosition();
-            _camera = Camera.main;
             GenerateMesh();
         }
 
@@ -231,19 +244,6 @@ namespace Assets.Map
                     i++;
                 }
             }
-        }
-
-        public void GenerateMesh()
-        {
-            ResetMesh();
-
-            var width = GetWidth();
-
-            GenerateInternalMap(width);
-
-            FillSideRenderWalls(width);
-
-            AssignMesh();
         }
 
         private Vector3 GetPosition()

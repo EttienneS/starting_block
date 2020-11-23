@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Map
 {
@@ -15,6 +14,4 @@ namespace Assets.Map
             OnCellClicked.Invoke(cell);
         }
     }
-
-    
 }

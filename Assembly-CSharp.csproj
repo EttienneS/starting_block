@@ -60,9 +60,11 @@
     <Compile Include="Assets\Map\Constants.cs" />
     <Compile Include="Assets\Map\ChunkRenderer.cs" />
     <Compile Include="Assets\Map\Pathing\InvalidPathException.cs" />
+    <Compile Include="Assets\Map\Cell.cs" />
     <Compile Include="Assets\Map\Pathing\Direction.cs" />
     <Compile Include="Assets\Helpers\Instrumenter.cs" />
     <Compile Include="Assets\Map\Pathing\DirectionExtensions.cs" />
+    <Compile Include="Assets\Map\CellEventManager.cs" />
     <Compile Include="Assets\Helpers\FastNoiseLite.cs" />
     <Compile Include="Assets\Map\Pathing\Pathfinder.cs" />
     <Compile Include="Assets\Map\Pathing\PathRequest.cs" />
@@ -71,8 +73,10 @@
     <Compile Include="Assets\Helpers\ColorExtensions.cs" />
     <Compile Include="Assets\Map\Pathing\IPathFindableCell.cs" />
     <Compile Include="Assets\Map\Pathing\CellPriorityQueue.cs" />
-    <Compile Include="Assets\Map\Cell.cs" />
-    <Compile Include="Assets\Map\CellEventManager.cs" />
+    <Compile Include="Assets\StrategyCamera\CameraController.cs" />
+    <Compile Include="Assets\ServiceLocator\IGameService.cs" />
+    <Compile Include="Assets\ServiceLocator\Loc.cs" />
+    <Compile Include="Assets\ServiceLocator\Bootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
