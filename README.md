@@ -27,7 +27,9 @@ An implementation (with minor enhancements) of the [Game Dev Guide](https://www.
 
 Doing proper dependency injection in Unity is very hard as the state is managed in a weird way.  A way to get around this is to use the Service Locator pattern, using this method a set of services can be defined (and instantiated in sequence) at start time, the Locator can then be invoked to find the service without the FindComponent<> overhead that Unity has. 
 
-Still not as clean as a proper DI framework but much better than having to manage singleton states in every component.
+Still not as clean as a proper DI framework but much better than having to manage singleton states in every component.  
+
+NOTE: When using this it is better to use the IGameService's Initialize method instead of Start and Awake as you are ensured that required stuff will be loaded by that time.
 
 ## Upcoming Features
 
