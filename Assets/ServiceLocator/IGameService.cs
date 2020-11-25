@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.ServiceLocator
 {
-    public interface IGameService
-    {
-        void BindServiceLocator(ServiceLocator locator);
-        void Initialize();
-    }
-
     public abstract class LocatableMonoBehavior : MonoBehaviour, IGameService
     {
         private ServiceLocator _locator;
+
         public void BindServiceLocator(ServiceLocator locator)
         {
             _locator = locator;

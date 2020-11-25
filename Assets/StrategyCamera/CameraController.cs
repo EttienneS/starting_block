@@ -1,4 +1,5 @@
 ﻿using Assets.ServiceLocator;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.StrategyCamera
@@ -6,7 +7,6 @@ namespace Assets.StrategyCamera
     public class CameraController : LocatableMonoBehavior
     {
         public Camera Camera;
-        public float fastSpeed;
         public float maxZoom;
         public float minZoom;
         public float movementSpeed;
@@ -15,20 +15,21 @@ namespace Assets.StrategyCamera
         public float rotationAmount;
         public Vector3 zoomAmount;
 
-        internal Vector3 dragCurrentPosition;
-        internal Vector3 dragStartPosition;
         internal Vector3 newPosition;
         internal Quaternion newRotation;
         internal Vector3 newZoom;
-        internal Vector3 rotateCurrentPosition;
-        internal Vector3 rotateStartPosition;
 
-        private Transform _followTransform;
-
+        private readonly Queue<CameraCommand> _commands = new Queue<CameraCommand>();
+        private CameraInputHandler _cameraInputHandler;
         private int _maxX;
         private int _maxZ;
         private int _minX;
         private int _minZ;
+
+        public void AddCameraCommand(CameraCommand command)
+        {
+            _commands.Enqueue(command);
+        }
 
         public void ConfigureBounds(int minx, int maxx, int minz, int maxz)
         {
@@ -38,48 +39,32 @@ namespace Assets.StrategyCamera
             _maxZ = maxz;
         }
 
-        public void FollowTransform(Transform transform)
-        {
-            if (_followTransform == transform)
-            {
-                StopFollowing();
-            }
-            else
-            {
-                _followTransform = transform;
-            }
-        }
-
         public override void Initialize()
         {
-            newPosition = transform.position;
-            newRotation = transform.rotation;
-
-            newZoom = Camera.transform.localPosition;
+            ResetDeltas();
 
             MoveToWorldCenter();
-        }
 
-        public void StopFollowing()
-        {
-            _followTransform = null;
+            // https://gameprogrammingpatterns.com/command.html
+            // using the command pattern we can easily change the handler to work diffirently when on a phone
+#if (UNITY_IPHONE || UNITY_ANDROID)
+            //_cameraInputHandler = new TouchScreenHandler(this);
+            _cameraInputHandler = new MouseAndKeyboardInputHandler(this);
+#else
+            _cameraInputHandler = new MouseAndKeyBoardHandler(this);
+#endif
+
         }
 
         public void Update()
         {
-            if (_followTransform != null)
+            _cameraInputHandler.HandleInput();
+
+            while (_commands.Count > 0)
             {
-                transform.position = _followTransform.position;
+                _commands.Dequeue().Execute(this);
             }
-            else
-            {
-                HandleMouseInput();
-                HandleMovementInput();
-            }
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
-            {
-                StopFollowing();
-            }
+            UpdateCameraAndEnsureBounds();
         }
 
         internal float GetPerpendicularRotation()
@@ -109,111 +94,24 @@ namespace Assets.StrategyCamera
                                Mathf.Clamp(zoom.z, -maxZoom, -minZoom));
         }
 
-        private void HandleMouseInput()
-        {
-            // https://www.youtube.com/watch?v=rnqF6S7PfFA&t=212s (from 12:00)
-            if (Input.mouseScrollDelta.y != 0)
-            {
-                newZoom += Input.mouseScrollDelta.y * zoomAmount;
-                newZoom = new Vector3(newZoom.x,
-                                      Mathf.Clamp(newZoom.y, minZoom, maxZoom),
-                                      Mathf.Clamp(newZoom.z, -maxZoom, -minZoom));
-            }
-
-            if (Input.GetMouseButtonDown(1))
-            {
-                var plane = new Plane(Vector3.up, Vector3.zero);
-                var ray = Camera.ScreenPointToRay(Input.mousePosition);
-
-                if (plane.Raycast(ray, out float entry))
-                {
-                    dragStartPosition = ray.GetPoint(entry);
-                }
-            }
-
-            if (Input.GetMouseButton(1))
-            {
-                var plane = new Plane(Vector3.up, Vector3.zero);
-                var ray = Camera.ScreenPointToRay(Input.mousePosition);
-
-                if (plane.Raycast(ray, out float entry))
-                {
-                    dragCurrentPosition = ray.GetPoint(entry);
-                    newPosition = transform.position + dragStartPosition - dragCurrentPosition;
-                }
-            }
-
-            if (Input.GetMouseButtonDown(2))
-            {
-                rotateStartPosition = Input.mousePosition;
-            }
-
-            if (Input.GetMouseButton(2))
-            {
-                rotateCurrentPosition = Input.mousePosition;
-
-                var diff = rotateStartPosition - rotateCurrentPosition;
-                rotateStartPosition = rotateCurrentPosition;
-
-                newRotation *= Quaternion.Euler(Vector3.up * (-diff.x / 5));
-            }
-        }
-
-        private void HandleMovementInput()
-        {
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-            {
-                movementSpeed = fastSpeed;
-            }
-            else
-            {
-                movementSpeed = normalSpeed;
-            }
-
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            {
-                newPosition += transform.forward * movementSpeed;
-            }
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            {
-                newPosition += transform.forward * -movementSpeed;
-            }
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-            {
-                newPosition += transform.right * movementSpeed;
-            }
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-            {
-                newPosition += transform.right * -movementSpeed;
-            }
-
-            //if (Input.GetKey(KeyCode.Q))
-            //{
-            //    newRotation *= Quaternion.Euler(Vector3.up * rotationAmount);
-            //}
-            //if (Input.GetKey(KeyCode.E))
-            //{
-            //    newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
-            //}
-
-            if (Input.GetKey(KeyCode.R))
-            {
-                newZoom += zoomAmount;
-            }
-            if (Input.GetKey(KeyCode.F))
-            {
-                newZoom -= zoomAmount;
-            }
-
-            transform.position = ClampPosition(Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTime));
-            transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * movementTime);
-            Camera.transform.localPosition = ClampZoom(Vector3.Lerp(Camera.transform.localPosition, newZoom, Time.deltaTime * movementTime));
-        }
-
         private void OnDrawGizmos()
         {
             Gizmos.color = new Color(1, 0, 0, 0.75f);
-            Gizmos.DrawCube(transform.position, new Vector3(0.25f, 0.25f, 0.25f));
+            Gizmos.DrawCube(transform.position, new Vector3(1f, 5f, 1f));
+        }
+
+        private void ResetDeltas()
+        {
+            newPosition = transform.position;
+            newRotation = transform.rotation;
+            newZoom = Camera.transform.localPosition;
+        }
+
+        private void UpdateCameraAndEnsureBounds()
+        {
+            transform.position = ClampPosition(Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTime));
+            transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * movementTime);
+            Camera.transform.localPosition = ClampZoom(Vector3.Lerp(Camera.transform.localPosition, newZoom, Time.deltaTime * movementTime));
         }
     }
 }
