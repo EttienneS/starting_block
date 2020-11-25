@@ -33,7 +33,7 @@ NOTE: When using this it is better to use the IGameService's Initialize method i
 
 ### GitHub Build
 
-Preconfigured GitHub build workflow (needs a secret configured before it will work if forked!!)
+Preconfigured GitHub build workflow.  To configure this, edit the main.yml file (if needed) and run the activation.yml, you will need to upload the file generated there to https://license.unity3d.com/manual and get a manual acitvation file that will be stored as a secret in your GitHub repo (UNITY_LICENSE)
 
 ## Upcoming Features
 
