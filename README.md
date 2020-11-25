@@ -31,6 +31,10 @@ Still not as clean as a proper DI framework but much better than having to manag
 
 NOTE: When using this it is better to use the IGameService's Initialize method instead of Start and Awake as you are ensured that required stuff will be loaded by that time.
 
+### GitHub Build
+
+Preconfigured GitHub build workflow (needs a secret configured before it will work if forked!!)
+
 ## Upcoming Features
 
 - Enhancements to the cell event manager for more selection options
