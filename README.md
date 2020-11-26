@@ -1,6 +1,26 @@
 # starting_block
 Project is intended to be a starting point for grid based games.  This project is updated as I learn and complete parts from other projects to help accelerate future projects to not have to re-invent the wheel each time.
 
+## Getting Started
+
+### Part 1: Get a clean URP Unity project
+
+- Create a new Unity Project with the same name using the Unity Hub with the Universal Render Pipeline template
+- Wait for the process to complete 
+- After Unity has loaded up delete everything in the Assets folder save the project and close Unity
+
+### Part 2: Get template
+
+- Create a copy of this template (Use this template button in this repository)
+- Give your version a name
+- Pull your repository so that the files exist on your machine somewhere
+
+### Part 3: Combine
+
+- Copy all the folders from your URP template project (Library, Packages, ProjectSettings, UserSettings etc) to the root of the pulled template (this takes a while)
+- After this is complete open Unity Hub again and now Add a project selecting the root of the pulled project folder
+- Unity should import everything, open the TestScene and run to ensure everything is working as expected
+
 ## Completed Features
 
 ### Custom chunk based terrain engine (from Karthus project).  
