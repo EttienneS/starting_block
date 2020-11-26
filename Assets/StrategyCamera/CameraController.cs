@@ -51,7 +51,7 @@ namespace Assets.StrategyCamera
             //_cameraInputHandler = new TouchScreenHandler(this);
             _cameraInputHandler = new MouseAndKeyboardInputHandler(this);
 #else
-            _cameraInputHandler = new MouseAndKeyBoardHandler(this);
+            _cameraInputHandler = new MouseAndKeyboardInputHandler(this);
 #endif
 
         }
