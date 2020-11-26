@@ -33,7 +33,11 @@ Unity does not always link up everything as we wanted, to troubleshoot the TestS
 - Ensure the BootStrapper object has a linked script
 - Ensure the SimpleMapGen object has a linked script and has a link to the ColorMaterial
 - Ensure the CameraRig object has a linked script and has a reference to the Camera sub object
-- If everything is magenta open the Project Settings, go to Graphics and at the top choose a render pipeline (HighQuality should be fine), ensure that all the pipelines in the Settings folder has the ForwardRenderer selected in the list
+- If everything is magenta open the Project Settings, go to Graphics and at the top choose a render pipeline (HighQuality should be fine), 
+- Ensure that all the pipelines in the Settings folder has the ForwardRenderer selected in the list
+- Ensure materials are linked to the actual graphs
+
+- Configure build by uploading activation sercret (see below)
 
 ## Completed Features
 
