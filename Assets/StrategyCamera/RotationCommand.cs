@@ -1,10 +1,7 @@
-﻿using Assets.ServiceLocator;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.StrategyCamera
 {
-
     public class RotationCommand : CameraCommand
     {
         private Vector3 _amount;
