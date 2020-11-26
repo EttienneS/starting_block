@@ -7,13 +7,13 @@ namespace Assets.StrategyCamera
     public class CameraController : LocatableMonoBehavior
     {
         public Camera Camera;
-        public float maxZoom;
-        public float minZoom;
-        public float movementSpeed;
-        public float movementTime;
-        public float normalSpeed;
-        public float rotationAmount;
-        public Vector3 zoomAmount;
+        public float maxZoom = 250f;
+        public float minZoom = 20f;
+        public float movementSpeed = 1f;
+        public float movementTime = 5f;
+        public float normalSpeed = 0.5f;
+        public float rotationAmount = 1f;
+        public Vector3 zoomAmount = new Vector3(0, -5f, 5f);
 
         internal Vector3 newPosition;
         internal Quaternion newRotation;

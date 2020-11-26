@@ -5,11 +5,15 @@ Project is intended to be a starting point for grid based games.  This project i
 
 ### Part 1: Get a clean URP Unity project
 
+To not have thousands of version specific files that Unity uses in this template we need to have a base template for a URP project to work to do that follow these steps:
+
 - Create a new Unity Project with the same name using the Unity Hub with the Universal Render Pipeline template
 - Wait for the process to complete 
 - After Unity has loaded up delete everything in the Assets folder save the project and close Unity
 
 ### Part 2: Get template
+
+Now we can copy use the template and get the files onto the box:
 
 - Create a copy of this template (Use this template button in this repository)
 - Give your version a name
@@ -17,9 +21,19 @@ Project is intended to be a starting point for grid based games.  This project i
 
 ### Part 3: Combine
 
+Next we combine the template with the Unity files to have a working instance of Starting_block
+
 - Copy all the folders from your URP template project (Library, Packages, ProjectSettings, UserSettings etc) to the root of the pulled template (this takes a while)
 - After this is complete open Unity Hub again and now Add a project selecting the root of the pulled project folder
-- Unity should import everything, open the TestScene and run to ensure everything is working as expected
+
+### Part 4: Finalize
+
+Unity does not always link up everything as we wanted, to troubleshoot the TestScene:
+
+- Ensure the BootStrapper object has a linked script
+- Ensure the SimpleMapGen object has a linked script and has a link to the ColorMaterial
+- Ensure the CameraRig object has a linked script and has a reference to the Camera sub object
+- If everything is magenta open the Project Settings, go to Graphics and at the top choose a render pipeline (HighQuality should be fine), ensure that all the pipelines in the Settings folder has the ForwardRenderer selected in the list
 
 ## Completed Features
 
@@ -64,4 +78,4 @@ Preconfigured GitHub build workflow.  To configure this, edit the main.yml file 
 ## Future Plans
 
 - Enhance locator to work more like a DI by actually having it construct objects and injecting state.
-
+- Make implementing the template simpler.
