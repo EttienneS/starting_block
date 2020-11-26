@@ -39,6 +39,9 @@ Unity does not always link up everything as we wanted, to troubleshoot the TestS
 
 - Configure build by uploading activation sercret (see below)
 
+- Build project (Ctrl + Shift + B), ensure TestScene is added to list
+- Commit all changes to repo
+
 ## Completed Features
 
 ### Custom chunk based terrain engine (from Karthus project).  
