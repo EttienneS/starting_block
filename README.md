@@ -1,6 +1,12 @@
 # starting_block
 Project is intended to be a starting point for grid based games.  This project is updated as I learn and complete parts from other projects to help accelerate future projects to not have to re-invent the wheel each time.
 
+## Before you begin
+
+This project is no longer in active develoment.  The first project I used this with (see sapphire-transistor) found several large gaps in the functionality.
+
+I have decided to rather focus on smaller projects but leaving this here if I ever want to return to it.
+
 ## Getting Started
 
 ### Part 1: Get a clean URP Unity project
